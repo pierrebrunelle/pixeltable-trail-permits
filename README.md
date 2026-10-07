@@ -19,7 +19,7 @@ A ranger station's permit desk: **trails** (with a string trail code), **permits
 - **Multi-table layout and schema evolution** with `pxt schema update`
 - **Incremental computed columns** powered by plain Python UDFs (`@pxt.udf`)
 - **FastAPI serving**: one `FastAPIRouter` turns tables and `@pxt.query` functions into typed REST routes (insert, update, delete, compute and query) with OpenAPI docs
-- **Importable UDF module**: UDFs in `udfs.py`, tables in `models.py`, queries in `queries.py`, routes in `app.py` (Pixeltable resolves UDFs by module path)
+- **Importable UDF module**: UDFs live in `udfs.py`; tables, queries and routes live together in `app.py` (Pixeltable resolves UDFs by module path)
 - **`pixeltable.toml`** declares a local database and a **Pixeltable Cloud** database, so the same code deploys with `pxt db update`
 
 ## Operating it on Pixeltable Cloud
@@ -43,13 +43,11 @@ pxt db restart $U                    # e.g. after `pxt secret set`
 
 | File | What it is |
 |------|------------|
-| `app.py` | The API: one `FastAPIRouter` wiring the tables and queries into REST routes |
+| `app.py` | The app: tables declared as Python classes, `@pxt.query` functions, and the `FastAPIRouter` routes |
 | `client_demo.py` | Band a trip, issue a permit, check a party in and out, and browse trails through the API |
-| `models.py` | Tables declared as Python classes: columns, computed columns, indexes |
 | `pixeltable.toml` | Project config: the local database plus a Pixeltable Cloud database (sizing, deploy excludes) |
-| `queries.py` | `@pxt.query` functions served as query routes |
 | `seed.py` | Seed trails and a few permits |
-| `udfs.py` | Pixeltable UDFs (`@pxt.udf`) in their own importable module |
+| `udfs.py` | Pixeltable UDFs (`@pxt.udf`) in their own importable module, imported by `app.py` |
 | `requirements.txt` / `pyproject.toml` | Dependencies (`pixeltable[serve]>=0.7.14`) |
 
 **Tables**
@@ -125,10 +123,10 @@ def permit_band(days: int, party_size: int) -> str:
     return 'overnight' if days > 1 else 'day-use'
 ```
 
-**2. Tables are Python classes (`models.py`).** Annotated attributes are stored columns; attributes assigned an expression are **computed columns** (`id`, `band`, `trail_upper`), evaluated incrementally on every insert or update and recomputed when their inputs change.
+**2. Tables are Python classes (`app.py`).** Annotated attributes are stored columns; attributes assigned an expression are **computed columns** (`id`, `band`, `trail_upper`), evaluated incrementally on every insert or update and recomputed when their inputs change.
 
 ```python
-# models.py
+# app.py
 class Permits(TableModel, name='permits'):
     id = pxt.Column(value=pxtf.uuid.uuid7(), primary_key=True)
     trail_code: pxt.String
@@ -142,10 +140,10 @@ class Permits(TableModel, name='permits'):
     trail_upper = pxtf.string.upper(trail_code)
 ```
 
-**3. Queries are functions (`queries.py`).** `@pxt.query` wraps a Pixeltable query so it can be called from Python or exposed as a route:
+**3. Queries are functions (`app.py`).** `@pxt.query` wraps a Pixeltable query so it can be called from Python or exposed as a route:
 
 ```python
-# queries.py
+# app.py
 @pxt.query
 def open_trails(region: str):
     return Trails.where((Trails.region == region) & (Trails.open == True)).select(  # noqa: E712
