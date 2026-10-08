@@ -1,6 +1,9 @@
 <!-- pixeltable-example-app: 20261002-trail-permits -->
 # Trail Permit API built with Pixeltable
 
+![Trail Permit API built with Pixeltable](.github/social-preview.png)
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/pierrebrunelle/pixeltable-trail-permits?quickstart=1)
 [![Built with Pixeltable](https://img.shields.io/badge/built%20with-Pixeltable-5b4bff)](https://pixeltable.com)
 [![PyPI - pixeltable](https://img.shields.io/pypi/v/pixeltable?label=pixeltable)](https://pypi.org/project/pixeltable/)
 [![GitHub stars](https://img.shields.io/github/stars/pixeltable/pixeltable?style=social)](https://github.com/pixeltable/pixeltable)
@@ -43,6 +46,9 @@ pxt db restart $U                    # e.g. after `pxt secret set`
 
 | File | What it is |
 |------|------------|
+| `.devcontainer/devcontainer.json` | GitHub Codespaces / Dev Container config: Python 3.12, installs `requirements.txt`, forwards port 8000 |
+| `.github/social-preview.png` | Social preview image (1280x640) |
+| `CITATION.cff` | Citation metadata (authors, license, release date, keywords) |
 | `app.py` | The app: tables declared as Python classes, `@pxt.query` functions, and the `FastAPIRouter` routes |
 | `client_demo.py` | Band a trip, issue a permit, check a party in and out, and browse trails through the API |
 | `pixeltable.toml` | Project config: the local database plus a Pixeltable Cloud database (sizing, deploy excludes) |
@@ -68,6 +74,22 @@ pxt db restart $U                    # e.g. after `pxt secret set`
 | `POST` | `/band` | compute | `Permits` |  |
 | `GET` | `/trails/open` | query | `open_trails` |  |
 | `GET` | `/permits/by-trail` | query | `permits_for` |  |
+
+## Run in your browser (GitHub Codespaces)
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/pierrebrunelle/pixeltable-trail-permits?quickstart=1)
+
+1. Click **Open in GitHub Codespaces** above (or [this link](https://codespaces.new/pierrebrunelle/pixeltable-trail-permits?quickstart=1)). The dev container installs Python 3.12 and `pixeltable[serve]>=0.7.14` from `requirements.txt`.
+2. In the codespace terminal, create the tables, seed them and start the API:
+
+   ```bash
+   pxt schema update app.py trails
+   python seed.py trails
+   pxt service run app.py trails --port 8000   # open http://localhost:8000/docs
+   python client_demo.py                      # in another terminal
+   ```
+
+3. Codespaces forwards port 8000: open it from the **Ports** tab (or the pop-up) and add `/docs` to the URL for the interactive OpenAPI docs.
 
 ## Quickstart
 
@@ -178,6 +200,9 @@ trails_api.add_query_route(path='/permits/by-trail', query=permits_for, method='
 - 📚 Docs: https://docs.pixeltable.com
 - 💻 Source: https://github.com/pixeltable/pixeltable (⭐ star it if Pixeltable is useful to you)
 - 📦 PyPI: https://pypi.org/project/pixeltable/
+- 🧩 More example apps: https://pierrebrunelle.github.io/awesome-pixeltable-apps/
+
+**[More Pixeltable example apps →](https://pierrebrunelle.github.io/awesome-pixeltable-apps/)**
 
 ---
 
