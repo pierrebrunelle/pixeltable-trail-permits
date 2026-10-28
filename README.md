@@ -31,8 +31,8 @@ A ranger station's permit desk: **trails** (with a string trail code), **permits
 U=pxt://<your-org>:<your-db>
 pxt db update $U                     # create or resize the database from pixeltable.toml
 pxt db status $U                     # state, cpu/memory, image
-pxt schema update app.py $U/trails   # tables
-pxt service update app.py $U/trails  # API (rerun after code changes)
+pxt schema update app.py $U          # tables
+pxt service update app.py $U         # API (rerun after code changes)
 pxt service list $U                  # hosted URL and routes
 pxt service logs trails_api --tail 50   # recent service logs
 pxt db logs $U --tail 50
@@ -124,8 +124,8 @@ The same `app.py` runs on [Pixeltable Cloud](https://pixeltable.com). Sign in (o
 pxt login                       # or: export PIXELTABLE_API_KEY=<your-api-key>
 # edit pixeltable.toml: name = 'pxt://<your-org>:<your-db>'
 pxt db update pxt://<your-org>:<your-db>                 # build the image and upload the project
-pxt schema update app.py pxt://<your-org>:<your-db>/trails   # create the tables in the hosted database
-pxt service update app.py pxt://<your-org>:<your-db>/trails  # start the API there
+pxt schema update app.py pxt://<your-org>:<your-db>       # create the tables at the database root (no per-app folder)
+pxt service update app.py pxt://<your-org>:<your-db>      # start the API there
 pxt service list pxt://<your-org>:<your-db>              # list hosted services
 ```
 
